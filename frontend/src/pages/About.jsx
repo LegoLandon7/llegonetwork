@@ -12,7 +12,7 @@ function About() {
                 description={"My name is Landon Lego. I am currently a High School Senior who very much enjoys coding. I take many classes that do with computer science, and programming. Although, I like to venture off a bit! This website is part of me expanding and trying new things.\n\nIn this website you will find many discord bots, programs, and other things that I have created in just my free time alone."}
                 grow={2}
                 buttons={[
-                    {label: "Socials", to: "/socials"},
+                    {label: "Projects", to: "/projects"},
                     {label: "Contact", to: "/contact"}
                 ]}
             />
