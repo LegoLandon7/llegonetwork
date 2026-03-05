@@ -94,7 +94,7 @@
             height: calc(var(--navbar-height) - var(--padding-3));
             width: auto;
 
-            padding-right: var(--padding-2);
+            margin-right: var(--padding-4);
 
             filter: invert(1);
         }

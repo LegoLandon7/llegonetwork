@@ -1,27 +1,27 @@
 :root {
-    /*Colors*/
-    --background-color-1: rgb(0, 0, 100);
-    --background-color-2: rgb(20, 20, 150);
-    --background-color-3: rgb(25, 25, 175);
+    /* Colors */
+    --background-color-1: rgb(8, 10, 28);
+    --background-color-2: rgb(12, 15, 38);
+    --background-color-3: rgb(16, 20, 50);
 
-    --header-background-color-1: rgb(20, 20, 50);
-    --header-background-color-2: rgb(30, 30, 100);
-    --header-background-color-3: rgba(153, 153, 227, 0.5);
-    --header-background-color-4: rgba(99, 99, 222, 0.5);
+    --header-background-color-1: rgb(10, 12, 35);
+    --header-background-color-2: rgb(18, 22, 60);
+    --header-background-color-3: rgba(80, 100, 220, 0.25);
+    --header-background-color-4: rgba(50, 70, 180, 0.25);
 
-    --body-background-color-1: rgba(30, 30, 30, 0.3);
-    --body-background-color-2: rgba(70, 70, 70, 0.3);
+    --body-background-color-1: rgba(20, 25, 60, 0.4);
+    --body-background-color-2: rgba(40, 50, 100, 0.4);
 
-    --header-text-color-1: rgb(15, 15, 125);
-    --header-text-color-2: rgb(220, 220, 220);
+    --header-text-color-1: rgb(130, 160, 255);
+    --header-text-color-2: rgb(225, 228, 255);
 
-    --body-text-color-1: rgb(200, 200, 200);
-    --body-text-color-2: rgb(170, 170, 170);
-    --body-text-color-3: rgb(130, 130, 130);
+    --body-text-color-1: rgb(195, 200, 230);
+    --body-text-color-2: rgb(155, 162, 200);
+    --body-text-color-3: rgb(110, 118, 160);
 
-    --detail-color-1: rgb(100, 0, 200);
-    --detail-color-2: rgb(75, 0, 150);
-    --detail-color-3: rgb(25, 0, 125);
+    --detail-color-1: rgb(60, 90, 200);
+    --detail-color-2: rgb(80, 60, 180);
+    --detail-color-3: rgb(55, 45, 160);
 
     --color-good: rgb(0, 200, 0);
     --color-bad: rgb(200, 0, 0);
@@ -104,6 +104,7 @@ html, body {
     flex-wrap: wrap;
 
     margin: calc(var(--navbar-height) + var(--padding-3)) auto 0;
+    gap: var(--padding-2);
 
     max-width: var(--max-width);
     width: 100%;

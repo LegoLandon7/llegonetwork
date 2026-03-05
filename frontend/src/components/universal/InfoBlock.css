@@ -69,7 +69,7 @@
         }
 
         .header-divider {
-            height: var(--padding-2);
+            height: var(--padding-3);
             width: 100%;
 
             background-color: var(--detail-color-2);
