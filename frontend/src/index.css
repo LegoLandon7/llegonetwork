@@ -19,13 +19,9 @@
     --body-text-color-2: rgb(170, 170, 170);
     --body-text-color-3: rgb(130, 130, 130);
 
-    --detail-color-1: rgb(130, 40, 130);
-    --detail-color-2: rgb(160, 30, 160);
-    --detail-color-3: rgb(200, 0, 200);
-    --detail-color-4: rgb(255, 0, 255);
-    --detail-color-5: rgb(150, 0, 220);
-    --detail-color-6: rgb(100, 0, 200);
-    --detail-color-7: rgb(75, 0, 150);
+    --detail-color-1: rgb(100, 0, 200);
+    --detail-color-2: rgb(75, 0, 150);
+    --detail-color-3: rgb(25, 0, 125);
 
     --color-good: rgb(0, 200, 0);
     --color-bad: rgb(200, 0, 0);
@@ -48,9 +44,10 @@
     --padding-4: 0.25rem;
 
     /*Borders*/
-    --border-1: 0.2rem solid var(--detail-color-6);
-    --border-2: 0.2rem solid var(--detail-color-7);
-    --border-3: 0.2rem solid var(--detail-color-5);
+    --border-1: 0.2rem solid var(--detail-color-1);
+    --border-2: 0.4rem solid var(--detail-color-2);
+    --border-3: 0.4rem solid var(--detail-color-3);
+    --border-3: 0.2rem solid grey;
 
     --border-radius-1: 16px;
     --border-radius-2: 8px;
@@ -88,6 +85,7 @@
 
 * {
     font-family: "Poppins", sans-serif;
+    box-sizing: border-box;
 }
 
 html, body {

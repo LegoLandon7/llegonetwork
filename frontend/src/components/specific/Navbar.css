@@ -39,12 +39,12 @@
             height: calc(var(--navbar-height) - var(--padding-3));
             width: auto;
 
-            padding-right: var(--padding-2);
+            margin-right: var(--padding-2);
         }
 
 
         &:hover {
-            color: var(--detail-color-7);
+            color: var(--detail-color-2);
         }
     }
 
@@ -73,11 +73,11 @@
             transition: background-color var(--transition-3);
 
             &.active {
-                background-color: var(--detail-color-6);
+                background-color: var(--detail-color-1);
             }
 
             &:hover:not(.active) {
-                background-color: var(--detail-color-7);
+                background-color: var(--detail-color-2);
             }
         }
     }
