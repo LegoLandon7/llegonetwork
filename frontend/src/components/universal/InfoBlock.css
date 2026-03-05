@@ -151,6 +151,7 @@
         align-items: stretch;
         flex: unset !important;
         width: 100%;
+        margin: var(--padding-3) 0;
 
         img {
             align-self: center;

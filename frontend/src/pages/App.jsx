@@ -13,6 +13,7 @@ function Users() {
 function App() {
   return (
     <>
+    <div>
       <Navbar />
       
       <Routes>
@@ -21,6 +22,7 @@ function App() {
         <Route path="/projects" element={<Users />} />
         <Route path="/contact" element={<Users />} />
       </Routes>
+    </div>
     </>
   )
 }

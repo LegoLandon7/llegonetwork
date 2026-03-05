@@ -2,6 +2,8 @@ import InfoBlock from '../components/universal/InfoBlock.jsx'
 
 import HeaderIcon from '/favicon.png'
 
+import '../components/css/containers.css'
+
 function Home() {
   return <div className="main-content">
         <InfoBlock 

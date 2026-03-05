@@ -86,7 +86,27 @@
 * {
     font-family: "Poppins", sans-serif;
     box-sizing: border-box;
+
     scrollbar-gutter: stable;
+    scrollbar-color: var(--detail-color-1) var(--background-color-1);
+    scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-color-1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--detail-color-1);
+    border-radius: var(--border-radius-2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--detail-color-2);
 }
 
 html, body {
@@ -95,19 +115,26 @@ html, body {
     background: linear-gradient(125deg, var(--background-color-2), var(--background-color-3));
 
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .main-content {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     flex-wrap: wrap;
 
     margin: calc(var(--navbar-height) + var(--padding-3)) auto 0;
     gap: var(--padding-2);
 
-    max-width: var(--max-width);
     width: 100%;
+    max-width: var(--max-width);
     min-height: calc(100vh - var(--navbar-height));
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 0 var(--padding-3);
+    }
 }
