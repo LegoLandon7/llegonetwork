@@ -14,6 +14,15 @@ function Home() {
                 {label: "About Me", to: "/about"},
             ]}
         />
+        <InfoBlock 
+            header={"Featured Project - LegoBot"}
+            description={"blah blah blah"}
+            img={HeaderIcon}
+            buttons={[
+                {label: "View More", to: "/"},
+                {label: "Invite", to: "/"},
+            ]}
+        />
     </div>
 }
 

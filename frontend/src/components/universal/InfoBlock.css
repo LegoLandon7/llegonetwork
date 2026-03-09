@@ -52,6 +52,7 @@
             flex-direction: row;
             flex-wrap: wrap;
             gap: var(--padding-3);
+            align-self: flex-end;
         }
 
         .info-button {
