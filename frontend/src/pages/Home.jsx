@@ -16,10 +16,10 @@ function Home() {
         />
         <InfoBlock 
             header={"Featured Project - LegoBot"}
-            description={"blah blah blah"}
+            description={"LegoBot is a muilti-purpose discord bot that allows you to do almost anything any ordinary bot would do. This bot can handle moderation, logging, quality of life commands, and so much more!"}
             img={HeaderIcon}
             buttons={[
-                {label: "View More", to: "/"},
+                {label: "View More", to: "/projects/LegoBot"},
                 {label: "Invite", to: "/"},
             ]}
         />

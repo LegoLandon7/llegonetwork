@@ -52,7 +52,7 @@
             flex-direction: row;
             flex-wrap: wrap;
             gap: var(--padding-3);
-            align-self: flex-end;
+            /*align-self: flex-end;*/
         }
 
         .info-button {
@@ -159,7 +159,7 @@
 
 @media (max-width: 768px) {
     .info-block {
-        flex-direction: column;
+        flex-direction: column !important;
         align-items: stretch;
         flex: unset !important;
         width: 100%;
@@ -167,6 +167,7 @@
 
         img {
             align-self: center;
+            width: 80% !important;
         }
 
         .info-notes {

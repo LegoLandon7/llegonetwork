@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 
 import Navbar from '../components/specific/Navbar.jsx'
 
@@ -6,8 +7,16 @@ import Home from './Home.jsx'
 import About from './About.jsx'
 import Projects from './Projects.jsx'
 
+import LegoBot from './projects/LegoBot.jsx'
+
 function Users() {
   return <h1>Users</h1>;
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
 }
 
 function App() {
@@ -21,12 +30,15 @@ function App() {
     <>
     <div>
       <Navbar />
+      <ScrollToTop />
       
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/contact" element={<Users />} />
+
+        <Route path="/projects/LegoBot" element={<LegoBot />} />
       </Routes>
     </div>
     </>
