@@ -11,8 +11,10 @@ const PROJECT_LINKS = [
 function Navbar() {
     const [menuOpen, setMenuOpen]         = useState(false)
     const [dropdownOpen, setDropdownOpen] = useState(false)
+
     const dropdownRef    = useRef(null)
     const drawerGroupRef = useRef(null)
+    
     const location       = useLocation()
 
     const activeProject = PROJECT_LINKS.find(p =>

@@ -7,8 +7,8 @@ function LegoBot() {
         <div className="flex-container-wrap">
             <InfoBlock 
                 header={"LegoBot"}
-                headerPos={"right"}
-                imgPos={"right"}
+                headerPos={"left"}
+                imgPos={"left"}
                 img={"https://cuddly-succotash-7vjr9r6g9q5vfx676-5173.app.github.dev/favicon.png"}
                 description={"LegoBot is a muilti-purpose discord bot that allows you to do almost anything any ordinary bot would do. This bot can handle moderation, logging, quality of life commands, and so much more!\n\nThis is the info page."}
                 buttons={[
