@@ -1,22 +1,34 @@
-import InfoBlock from '../components/universal/InfoBlock.jsx'
+import Card from '../components/universal/Card.jsx'
+import PageHeader from '../components/universal/PageHeader.jsx'
 
 import '../components/css/containers.css'
 
 function Projects() {
-  return <div className="main-content">
-        <div className="flex-container-wrap">
-            <InfoBlock 
-                header={"LegoBot"}
-                img={"https://cuddly-succotash-7vjr9r6g9q5vfx676-5173.app.github.dev/favicon.png"}
-                description={"LegoBot is a muilti-purpose discord bot that allows you to do almost anything any ordinary bot would do. This bot can handle moderation, logging, quality of life commands, and so much more!"}
-                buttons={[
-                    {label: "View More", to: "/projects/LegoBot"},
-                    {label: "Invite", to: "/"}
-                ]}
-
+    return (
+        <div className="main-content">
+            <PageHeader
+                title="Projects"
+                subtitle="Things I have built in my free time."
+                backTo="/"
+                backLabel="Home"
             />
+
+            <div className="card-grid">
+                <Card
+                    title="LegoBot"
+                    img="https://cuddly-succotash-7vjr9r6g9q5vfx676-5173.app.github.dev/favicon.png"
+                    badge="Online"
+                    badgeColor="good"
+                    description="A multi-purpose Discord bot for moderation, logging, quality of life commands, and more."
+                    buttons={[
+                        { label: "Dashboard", to: "/projects/LegoBot/dashboard" },
+                        { label: "View More", to: "/projects/LegoBot" },
+                        { label: "Invite", to: "/", external: true },
+                    ]}
+                />
+            </div>
         </div>
-    </div>
+    )
 }
 
 export default Projects

@@ -7,7 +7,9 @@ import Home from './Home.jsx'
 import About from './About.jsx'
 import Projects from './Projects.jsx'
 
-import LegoBot from './projects/LegoBot.jsx'
+import LegoBot from './projects/LegoBot/LegoBot.jsx'
+import LegoBotDocs from './projects/LegoBot/Docs.jsx'
+import LegoBotDashboard from './projects/LegoBot/Dashboard.jsx'
 
 function Users() {
   return <h1>Users</h1>;
@@ -39,6 +41,8 @@ function App() {
         <Route path="/contact" element={<Users />} />
 
         <Route path="/projects/LegoBot" element={<LegoBot />} />
+        <Route path="/projects/LegoBot/docs" element={<LegoBotDocs />} />
+        <Route path="/projects/LegoBot/dashboard" element={<LegoBotDashboard />} />
       </Routes>
     </div>
     </>

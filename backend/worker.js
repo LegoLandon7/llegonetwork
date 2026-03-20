@@ -1,4 +1,4 @@
-/**
+/*
  * llegonetwork API — Cloudflare Worker
  *
  * Required secrets (set via: wrangler secret put <NAME>):

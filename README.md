@@ -59,7 +59,7 @@ wrangler secret put BOT_USER_ID
 wrangler secret put BOT_API_SECRET
 ```
 
-Generate `JWT_SECRET` and `BOT_API_SECRET` yourself with `openssl rand -base64 32`. The others come from the Discord developer portal.
+Generate `JWT_SECRET` and `BOT_API_SECRET` yourself with `openssl rand -base64 32` or any other random string. The others come from the Discord developer portal.
 
 Add `https://api.yourdomain.com/auth/callback` as a redirect URI in your Discord application under OAuth2, then deploy:
 
