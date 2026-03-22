@@ -3,6 +3,8 @@ import Section from '../../../components/universal/Section.jsx'
 import PageHeader from '../../../components/universal/PageHeader.jsx'
 import LinkButton from '../../../components/universal/LinkButton.jsx'
 
+import HeaderIcon from '/favicon.png'
+
 import '../../../components/css/containers.css'
 
 function LegoBot() {
@@ -30,7 +32,7 @@ function LegoBot() {
             <Section
                 title="LegoBot"
                 description={"LegoBot is a multi-purpose Discord bot that allows you to do almost anything any ordinary bot would do. This bot can handle moderation, logging, quality of life commands, and so much more!\n\nThis is the info page."}
-                img="https://cuddly-succotash-7vjr9r6g9q5vfx676-5173.app.github.dev/favicon.png"
+                img={HeaderIcon}
                 imgPos="left"
             />
         </div>

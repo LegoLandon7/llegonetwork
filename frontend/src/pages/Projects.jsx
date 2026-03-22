@@ -1,6 +1,8 @@
 import Card from '../components/universal/Card.jsx'
 import PageHeader from '../components/universal/PageHeader.jsx'
 
+import HeaderIcon from '/favicon.png'
+
 import '../components/css/containers.css'
 
 function Projects() {
@@ -16,7 +18,7 @@ function Projects() {
             <div className="card-grid">
                 <Card
                     title="LegoBot"
-                    img="https://cuddly-succotash-7vjr9r6g9q5vfx676-5173.app.github.dev/favicon.png"
+                    img={HeaderIcon}
                     badge="Online"
                     badgeColor="good"
                     description="A multi-purpose Discord bot for moderation, logging, quality of life commands, and more."

@@ -83,8 +83,6 @@
 * {
     font-family: "Poppins", sans-serif;
     box-sizing: border-box;
-
-    scrollbar-gutter: stable;
     scrollbar-color: var(--detail-color-2) var(--background-color-1);
     scrollbar-width: thin;
 }
@@ -100,6 +98,7 @@
 html, body {
     min-height: 100svh;
     background: linear-gradient(135deg, var(--background-color-1), var(--background-color-3));
+    scrollbar-gutter: stable;
     overflow-x: hidden;
     overflow-y: scroll;
 }

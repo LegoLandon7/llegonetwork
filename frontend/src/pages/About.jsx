@@ -17,7 +17,7 @@ function About() {
                 ]}
             />
             <InfoBlock
-                img={"https://cdn.discordapp.com/avatars/623964733799923733/d15a88574598af1f9acfc128f8bb0aeb.png?size=4096"}
+                img={HeaderIcon}
                 imgPos={"top"}
                 notes={[
                     {label: "nickname", text: "TheLegoGuy"},
