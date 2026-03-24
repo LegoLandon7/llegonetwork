@@ -193,7 +193,10 @@
                 border-top: none;
                 border-radius: 0 0 var(--radius-md) var(--radius-md);
 
-                overflow: hidden;
+                max-height: 60vh;
+                overflow-x: hidden;
+                overflow-y: auto;
+
                 transform-origin: top;
                 transform: scaleY(0);
                 opacity: 0;

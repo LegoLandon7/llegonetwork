@@ -115,6 +115,8 @@ a {
 
     margin: 0;
     padding: 0;
+
+    transition: background-color var(--transition), color var(--transition), border-color var(--transition);
 }
 
 ::selection {
