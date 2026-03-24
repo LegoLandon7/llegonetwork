@@ -217,7 +217,7 @@
                     &::after { display: none; }
 
                     &:hover  { color: var(--text); background: var(--bg-hover); }
-                    &.active { color: var(--text); background: var(--bg-hover); }
+                    &.active { color: var(--text); background: var(--bg-subtle); }
                 }
             }
         }
@@ -262,7 +262,7 @@
                 &::after { display: none; }
 
                 &:hover  { color: var(--text); background: var(--bg-hover); }
-                &.active { color: var(--text); background: var(--bg-hover); }
+                &.active { color: var(--text); background: var(--bg-subtle); }
             }
 
             button:has(.subroute) > span:first-child::after { display: none; }
@@ -290,7 +290,7 @@
                         padding-left: var(--space-lg);
 
                         &:hover  { background: var(--bg-hover); }
-                        &.active { background: var(--bg-hover); }
+                        &.active { background: var(--bg-subtle); }
                     }
                 }
             }
