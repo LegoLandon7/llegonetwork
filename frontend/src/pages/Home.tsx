@@ -8,8 +8,6 @@ export default function Home() {
                 subhead="stuff about llegonetwork, and links to projects and socials"
                 align="center"
             />
-
-
         </>
     );
 }
