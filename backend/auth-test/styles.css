@@ -4,7 +4,7 @@
     cursor: pointer;
     background-color: #002954;
     color: white;
-    border: none;
+    border: 1px solid #001730;
     border-radius: 5px;
     margin: 5px;
 }

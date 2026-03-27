@@ -6,6 +6,8 @@ const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI;
 const COOKIE_SECRET = process.env.COOKIE_SECRET;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
+const sessions = new Map();
+
 function base64url(input) {
     return Buffer.from(input).toString("base64url");
 }
@@ -106,11 +108,18 @@ export default async function handler(request) {
 
             const user = await userRes.json();
 
+            const sessionId = crypto.randomBytes(32).toString("hex");
+
+            sessions.set(sessionId, {
+                accessToken: tokenData.access_token,
+                userId: user.id
+            });
+
             const jwt = createJWT({
                 userId: user.id,
                 username: user.username,
                 avatar: user.avatar,
-                accessToken: tokenData.access_token,
+                sessionId,
                 exp: Math.floor(Date.now() / 1000) + 604800
             }, COOKIE_SECRET);
 
@@ -121,7 +130,7 @@ export default async function handler(request) {
                     "Location": FRONTEND_URL
                 }
             });
-        } catch (e) {
+        } catch {
             return new Response("Error", { status: 500 });
         }
     }
@@ -146,15 +155,24 @@ export default async function handler(request) {
         const token = getCookie(request.headers.get("cookie"), "auth");
         const payload = verifyToken(token);
 
-        if (!payload?.accessToken) {
+        if (!payload?.sessionId) {
             return new Response(JSON.stringify({ error: "unauthorized" }), {
                 status: 401,
                 headers: { ...corsHeaders, "Content-Type": "application/json" }
             });
         }
 
+        const session = sessions.get(payload.sessionId);
+
+        if (!session) {
+            return new Response(JSON.stringify({ error: "invalid session" }), {
+                status: 401,
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+            });
+        }
+
         const res = await fetch("https://discord.com/api/v10/users/@me/guilds", {
-            headers: { Authorization: `Bearer ${payload.accessToken}` }
+            headers: { Authorization: `Bearer ${session.accessToken}` }
         });
 
         const data = await res.json();
