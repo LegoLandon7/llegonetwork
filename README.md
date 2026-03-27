@@ -1,17 +1,46 @@
 # llegonetwork
 
-THIS BACKEND I JUST MADE IS _NOT_ SAFE YET SO DO NOT EVEN TRY TO USE IT AND ALSO I USED AI TO HELP ME UNDERSTAND NEW CONCEPTS EXCEPT THE FRONTEND WAS MADE ALL BY ME
+llegonetwork is a personal site and collection of projects built by a single developer as a way to learn and experiment with web development, bots, and new concepts.
 
-## About us
+> **Note:** The backend is not production-ready. Do not attempt to use it in its current state. AI tools were used to help understand unfamiliar concepts during development. All frontend code was written independently.
 
-llegonetwork is a site and web of many creations made by a single developer (me) to learn how to code
+---
 
-## How to set up
-
+## Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-# this readme is temporary so shut up
+---
+
+## Backend
+
+The backend runs as a Cloudflare Worker and handles Discord OAuth2, session management, and API proxying.
+
+### 1. Deploy the worker
+
+Copy the contents of `backend/auth-worker.js` into a new Cloudflare Worker.
+
+### 2. Set environment variables
+
+Add the following as encrypted secrets in the worker's settings:
+
+| Variable | Description |
+|---|---|
+| `COOKIE_SECRET` | A long random string used to sign and encrypt session cookies and tokens. Generate with `openssl rand -hex 32` |
+| `DISCORD_CLIENT_ID` | Your Discord application's client ID, found in the Discord Developer Portal |
+| `DISCORD_CLIENT_SECRET` | Your Discord application's client secret, found in the Discord Developer Portal |
+| `DISCORD_REDIRECT_URI` | The full callback URL of your worker, e.g. `https://api.yourdomain.dev/auth/callback`. Must match exactly what is set in the Discord Developer Portal under OAuth2 redirects |
+| `FRONTEND_URL` | The origin of your frontend, e.g. `https://yourdomain.dev`. Used for CORS and post-login redirects |
+
+### 3. Create a KV namespace binding
+
+In your worker's settings under **KV Namespace Bindings**, create a binding with the variable name `SESSIONS`. This is used to store rate limit data and encrypted session tokens.
+
+---
+
+## Legal
+
+placeholder
