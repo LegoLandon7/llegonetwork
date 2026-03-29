@@ -222,6 +222,8 @@
             }
 
             &.user {
+                order: 999;
+
                 > button {
                     gap: var(--space-xs);
 
@@ -250,16 +252,17 @@
         }
 
         a.login {
+            order: 999;
             padding: 0 var(--space-md);
             margin: auto var(--space-xs);
             height: calc(var(--navbar-height) * 0.55);
             border-radius: var(--radius-full);
-            color: var(--accent);
+            color: var(--text);
             background: var(--accent-subtle);
             transition: background var(--transition), color var(--transition);
 
             &::after { display: none; }
-            &:hover  { color: var(--accent); background: var(--accent-subtle-hover, var(--bg-hover)); }
+            &:hover  { color: var(--text); background: var(--accent-hover); }
         }
     }
 
@@ -307,14 +310,17 @@
             }
 
             a.login {
+                order: 0;
                 height: var(--navbar-height);
                 margin: 0;
                 border-radius: 0;
-                background: none;
-                color: var(--accent);
+                background: var(--accent-subtle);
+                color: var(--text);
 
-                &:hover { background: var(--bg-hover); color: var(--accent); }
+                &:hover { background: var(--accent-hover); color: var(--text); }
             }
+
+            .nav-dropdown.user { order: 0; margin-left: 0; }
 
             button:has(.subroute) > span:first-child::after { display: none; }
 
