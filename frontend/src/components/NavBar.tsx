@@ -87,7 +87,7 @@ export default function NavBar() {
                         </div>
                     </div>
                 ) : (
-                    <a className='login' href='https://api.llegonetwork.dev/auth/login'>Login with Discord</a>
+                    <a className='login' href={`https://api.llegonetwork.dev/auth/login?redirect=${encodeURIComponent(window.location.href)}`}>Login</a>
                 )}
             </div>
 
