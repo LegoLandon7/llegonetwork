@@ -220,10 +220,49 @@
                     &.active { color: var(--text); background: var(--bg-subtle); }
                 }
             }
+
+            &.user {
+                > button {
+                    gap: var(--space-xs);
+                    
+
+                    &::after { display: none; }
+
+                    > span {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: var(--space-xs);
+                    }
+
+                    img {
+                        aspect-ratio: 1;
+                        height: calc(var(--navbar-height) * 0.52);
+                        border-radius: var(--radius-full);
+                        object-fit: cover;
+                    }
+
+                    .username { display: none; }
+                }
+
+                .dropdown-menu { left: auto; right: 0; }
+            }
+        }
+
+        a.login {
+            padding: 0 var(--space-md);
+            margin: auto var(--space-xs);
+            height: calc(var(--navbar-height) * 0.55);
+            border-radius: var(--radius-full);
+            background: var(--accent-subtle);
+            transition: background var(--transition), color var(--transition);
+
+            &::after { display: none; }
+            &:hover  { color: var(--text); background: var(--bg-hover); }
         }
     }
 
     @media (max-width: 600px) {
+
         .hamburger {
             display: flex;
         }
@@ -293,6 +332,8 @@
                         &.active { background: var(--bg-subtle); }
                     }
                 }
+
+                &.user > button .username { display: inline; }
             }
         }
     }

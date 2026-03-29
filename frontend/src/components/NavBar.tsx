@@ -2,14 +2,22 @@ import { NavLink, useMatch } from 'react-router';
 import { useState, useEffect, useRef } from 'react';
 import './NavBar.scss'
 
+type User = { userId: string, username: string, avatar: string | null };
+
 export default function NavBar() {
-    const [open, setOpen] = useState<'projects' | 'settings' | null>(null);
+    const [open, setOpen] = useState<'projects' | 'user' | null>(null);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
 
     const navRef = useRef<HTMLElement>(null);
-
     const projectsActive = useMatch('/projects/*');
     const projectsMatch = useMatch('/projects/:page');
+
+    useEffect(() => {
+        fetch('https://api.llegonetwork.dev/user', { credentials: 'include' })
+            .then(r => r.ok ? r.json() : null)
+            .then(d => { if (d) setUser(d); });
+    }, []);
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -26,6 +34,10 @@ export default function NavBar() {
         setOpen(null);
         setMenuOpen(false);
     }
+
+    const avatarUrl = user?.avatar
+        ? `https://cdn.discordapp.com/avatars/${user.userId}/${user.avatar}.png`
+        : '/favicon.png';
 
     return (
         <nav className='navbar' ref={navRef}>
@@ -58,9 +70,30 @@ export default function NavBar() {
                         <NavLink to='/projects/legogpt' onClick={closeAll}>LegoGPT</NavLink>
                     </div>
                 </div>
+
+                {user ? (
+                    <div className='nav-dropdown user'>
+                        <button onClick={() => setOpen(open === 'user' ? null : 'user')}>
+                            <span>
+                                <img src={avatarUrl} />
+                                <span className='username'>{user.username}</span>
+                                <span className={`caret ${open === 'user' ? 'open' : ''}`} />
+                            </span>
+                        </button>
+
+                        <div className={`dropdown-menu ${open === 'user' ? 'open' : ''}`}>
+                            <NavLink to='/details' onClick={closeAll}>Details</NavLink>
+                            <a href='https://api.llegonetwork.dev/auth/logout'>Logout</a>
+                        </div>
+                    </div>
+                ) : (
+                    <a className='login' href='https://api.llegonetwork.dev/auth/login'>Login with Discord</a>
+                )}
             </div>
 
-            <button className={`hamburger ${menuOpen ? 'open' : ''}`} onClick={() => { setMenuOpen(!menuOpen); setOpen(null); }}>
+            <button
+                className={`hamburger ${menuOpen ? 'open' : ''}`}
+                onClick={() => { setMenuOpen(!menuOpen); setOpen(null); }}>
                 <span />
                 <span />
                 <span />
