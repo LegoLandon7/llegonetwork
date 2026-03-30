@@ -62,7 +62,6 @@ export default function NavBar() {
                         </button>
 
                         <div className={`dropdown-menu ${open === 'user' ? 'open' : ''}`}>
-                            <NavLink to='/details' onClick={closeAll}>Details</NavLink>
                             <a href={`https://api.llegonetwork.dev/auth/logout?redirect=${encodeURIComponent(window.location.href)}`}>Logout</a>
                         </div>
                     </div>
