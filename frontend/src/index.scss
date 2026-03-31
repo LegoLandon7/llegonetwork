@@ -187,6 +187,8 @@ body {
     max-width: var(--max-width);
     margin: 0 auto;
 
+    min-height: 200vh;
+
     display: flex;
     flex-direction: column;
     align-items: center;
