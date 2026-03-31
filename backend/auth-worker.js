@@ -1,7 +1,7 @@
-const SESSION_TTL = 7 * 24 * 60 * 60;
-const DISCORD_API = 'https://discord.com/api/v10';
+const SESSION_TTL  = 7 * 24 * 60 * 60;
+const DISCORD_API  = 'https://discord.com/api/v10';
 
-const ERRORS = {
+const HTTP_ERRORS = {
     400: 'Bad request',
     401: 'Unauthorized',
     404: 'Not found',
@@ -10,11 +10,14 @@ const ERRORS = {
 };
 
 const SEC_HEADERS = {
-    'X-Content-Type-Options':           'nosniff',
-    'X-Frame-Options':                  'DENY',
-    'Referrer-Policy':                  'strict-origin-when-cross-origin',
-    'Strict-Transport-Security':        'max-age=63072000; includeSubDomains; preload',
+    'X-Content-Type-Options':     'nosniff',
+    'X-Frame-Options':            'DENY',
+    'Referrer-Policy':            'strict-origin-when-cross-origin',
+    'Strict-Transport-Security':  'max-age=63072000; includeSubDomains; preload',
 };
+
+
+// ── Response helpers ─────────────────────────────────────────────────────────
 
 function json(data, status = 200, extra = {}) {
     return new Response(JSON.stringify(data), {
@@ -24,7 +27,7 @@ function json(data, status = 200, extra = {}) {
 }
 
 function err(status) {
-    return json({ error: ERRORS[status] ?? 'Error' }, status);
+    return json({ error: HTTP_ERRORS[status] ?? 'Error' }, status);
 }
 
 function redirect(location, extra = {}) {
@@ -41,15 +44,14 @@ function getAllowedOrigins(frontendUrl) {
     return frontendUrl.split(',').map(s => s.trim()).filter(Boolean);
 }
 
-function safeRedirectUrl(requested, frontendUrl) {
-    const allowed = getAllowedOrigins(frontendUrl);
+function safeRedirectUrl(requested, allowed) {
     return allowed.some(o => requested === o || requested.startsWith(o + '/'))
         ? requested
         : allowed[0];
 }
 
-function corsHeaders(origin, frontendUrl) {
-    if (!getAllowedOrigins(frontendUrl).includes(origin)) return {};
+function corsHeaders(origin, allowed) {
+    if (!allowed.includes(origin)) return {};
     return {
         'Access-Control-Allow-Origin':      origin,
         'Access-Control-Allow-Methods':     'GET, POST, OPTIONS',
@@ -63,9 +65,10 @@ function corsHeaders(origin, frontendUrl) {
 // ── Rate limiting ────────────────────────────────────────────────────────────
 
 async function isRateLimited(ip, kv) {
-    const now = Date.now();
-    const key = `rl:${ip}`;
-    const entry = await kv.get(key, { type: 'json' }) ?? { count: 0, since: now };
+    const now   = Date.now();
+    const key   = `rl:${ip}`;
+    const raw   = await kv.get(key, { type: 'json' });
+    const entry = (raw && typeof raw === 'object') ? raw : { count: 0, since: now };
 
     if (now - entry.since > 60_000) {
         entry.count = 1;
@@ -82,14 +85,21 @@ async function isRateLimited(ip, kv) {
 // ── AES-GCM ──────────────────────────────────────────────────────────────────
 
 async function deriveAesKey(secret) {
-    const raw = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret));
+    const raw = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(secret),
+    );
     return crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
 }
 
 async function encrypt(text, secret) {
     const key = await deriveAesKey(secret);
     const iv  = crypto.getRandomValues(new Uint8Array(12));
-    const enc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(text));
+    const enc = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        new TextEncoder().encode(text),
+    );
 
     const combined = new Uint8Array(12 + enc.byteLength);
     combined.set(iv);
@@ -103,9 +113,13 @@ async function decrypt(b64, secret) {
     const key   = await deriveAesKey(secret);
     const bytes = Uint8Array.from(
         atob(b64.replace(/-/g, '+').replace(/_/g, '/')),
-        c => c.charCodeAt(0)
+        c => c.charCodeAt(0),
     );
-    const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes.slice(0, 12) }, key, bytes.slice(12));
+    const dec = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: bytes.slice(0, 12) },
+        key,
+        bytes.slice(12),
+    );
     return new TextDecoder().decode(dec);
 }
 
@@ -114,23 +128,39 @@ async function decrypt(b64, secret) {
 
 async function hmacSign(data, context, secret) {
     const key = await crypto.subtle.importKey(
-        'raw', new TextEncoder().encode(`${secret}:${context}`),
-        { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+        'raw',
+        new TextEncoder().encode(`${secret}:${context}`),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign'],
     );
     const buf = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(data));
     return btoa(String.fromCharCode(...new Uint8Array(buf)))
         .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
+// Constant-time string comparison — pads to equal length so loop always runs fully
 function timingSafeEqual(a, b) {
-    if (a.length !== b.length) return false;
-    let diff = 0;
-    for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    const len  = Math.max(a.length, b.length);
+    const pa   = a.padEnd(len, '\0');
+    const pb   = b.padEnd(len, '\0');
+    let   diff = a.length === b.length ? 0 : 1;
+    for (let i = 0; i < len; i++) diff |= pa.charCodeAt(i) ^ pb.charCodeAt(i);
     return diff === 0;
 }
 
+// Safe base64url encoding via TextEncoder (avoids btoa throwing on non-Latin1)
 function b64url(obj) {
-    return btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    return btoa(String.fromCharCode(...bytes))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+// Restore base64 padding before decoding
+function b64urlDecode(s) {
+    const padded = s.replace(/-/g, '+').replace(/_/g, '/');
+    const pad    = (4 - (padded.length % 4)) % 4;
+    return atob(padded + '='.repeat(pad));
 }
 
 async function signJWT(payload, secret) {
@@ -143,11 +173,15 @@ async function signJWT(payload, secret) {
 async function verifyJWT(token, secret) {
     try {
         if (typeof token !== 'string') return null;
-        const [header, body, sig] = token.split('.');
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const [header, body, sig] = parts;
         if (!header || !body || !sig) return null;
-        if (!timingSafeEqual(sig, await hmacSign(`${header}.${body}`, 'jwt', secret))) return null;
 
-        const payload = JSON.parse(atob(body.replace(/-/g, '+').replace(/_/g, '/')));
+        const expected = await hmacSign(`${header}.${body}`, 'jwt', secret);
+        if (!timingSafeEqual(sig, expected)) return null;
+
+        const payload = JSON.parse(b64urlDecode(body));
         if (typeof payload.exp !== 'number' || payload.exp < Math.floor(Date.now() / 1000)) return null;
         if (!payload.sessionId || !payload.userId) return null;
 
@@ -161,18 +195,20 @@ async function verifyJWT(token, secret) {
 // ── State (CSRF) ─────────────────────────────────────────────────────────────
 
 async function createState(secret, kv, redirectTo) {
-    const bytes  = crypto.getRandomValues(new Uint8Array(24));
-    const nonce  = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-    const mac    = await hmacSign(nonce, 'state', secret);
+    const bytes = crypto.getRandomValues(new Uint8Array(24));
+    const nonce = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    const mac   = await hmacSign(nonce, 'state', secret);
     await kv.put(`state:${nonce}`, redirectTo, { expirationTtl: 600 });
     return `${nonce}.${mac}`;
 }
 
 async function consumeState(state, secret, kv) {
     if (typeof state !== 'string') return null;
-    const split  = state.lastIndexOf('.');
-    const nonce  = state.slice(0, split);
-    const mac    = state.slice(split + 1);
+    const split = state.lastIndexOf('.');
+    if (split === -1) return null;
+    const nonce = state.slice(0, split);
+    const mac   = state.slice(split + 1);
+    if (!nonce || !mac) return null;
     if (!timingSafeEqual(mac, await hmacSign(nonce, 'state', secret))) return null;
 
     const redirectTo = await kv.get(`state:${nonce}`);
@@ -187,10 +223,11 @@ async function consumeState(state, secret, kv) {
 
 function getCookie(header, name) {
     for (const part of (header ?? '').split(';')) {
-        const [key, ...val] = part.trim().split('=');
-        if (key === name) {
-            try { return decodeURIComponent(val.join('=')); } catch { return null; }
-        }
+        const eq  = part.indexOf('=');
+        if (eq === -1) continue;
+        const key = part.slice(0, eq).trim();
+        if (key !== name) continue;
+        try { return decodeURIComponent(part.slice(eq + 1).trim()); } catch { return null; }
     }
     return null;
 }
@@ -242,7 +279,11 @@ async function getValidSession(sessionId, env) {
     const refreshed = await refreshAccessToken(session, env);
     if (!refreshed) return null;
 
-    await env.SESSIONS.put(`session:${sessionId}`, JSON.stringify(refreshed), { expirationTtl: SESSION_TTL });
+    await env.SESSIONS.put(
+        `session:${sessionId}`,
+        JSON.stringify(refreshed),
+        { expirationTtl: SESSION_TTL },
+    );
     return refreshed;
 }
 
@@ -250,7 +291,10 @@ async function getValidSession(sessionId, env) {
 // ── Auth helpers ─────────────────────────────────────────────────────────────
 
 async function requireAuth(req, env) {
-    const payload = await verifyJWT(getCookie(req.headers.get('cookie'), 'auth'), env.COOKIE_SECRET);
+    const payload = await verifyJWT(
+        getCookie(req.headers.get('cookie'), 'auth'),
+        env.COOKIE_SECRET,
+    );
     if (!payload) return null;
 
     const session = await getValidSession(payload.sessionId, env);
@@ -262,30 +306,35 @@ async function requireAuth(req, env) {
 
 // ── Route handlers ───────────────────────────────────────────────────────────
 
-async function handleLogin(url, env) {
-    const allowed      = getAllowedOrigins(env.FRONTEND_URL);
-    const safeRedirect = safeRedirectUrl(url.searchParams.get('redirect') ?? allowed[0], env.FRONTEND_URL);
+async function handleLogin(url, env, allowed) {
+    const safeRedirect = safeRedirectUrl(
+        url.searchParams.get('redirect') ?? allowed[0],
+        allowed,
+    );
+    const state = await createState(env.COOKIE_SECRET, env.SESSIONS, safeRedirect);
 
     return redirect(`https://discord.com/api/oauth2/authorize?${new URLSearchParams({
         client_id:     env.DISCORD_CLIENT_ID,
         redirect_uri:  env.DISCORD_REDIRECT_URI,
         response_type: 'code',
         scope:         'identify guilds guilds.members.read',
-        state:         await createState(env.COOKIE_SECRET, env.SESSIONS, safeRedirect),
+        state,
     })}`);
 }
 
-async function handleCallback(url, env) {
-    const code       = url.searchParams.get('code');
-    const state      = url.searchParams.get('state');
-    const redirectTo = await consumeState(state, env.COOKIE_SECRET, env.SESSIONS);
-
+async function handleCallback(url, env, allowed) {
+    // Check for OAuth error before doing anything else
     if (url.searchParams.has('error')) {
-        const allowed = getAllowedOrigins(env.FRONTEND_URL);
         return redirect(`${allowed[0]}?error=access_denied`);
     }
 
-    if (!code || typeof code !== 'string' || code.length > 512 || !redirectTo) return err(400);
+    const code  = url.searchParams.get('code');
+    const state = url.searchParams.get('state');
+
+    if (!code || typeof code !== 'string' || code.length > 512) return err(400);
+
+    const redirectTo = await consumeState(state, env.COOKIE_SECRET, env.SESSIONS);
+    if (!redirectTo) return err(400);
 
     const tokenRes = await fetch('https://discord.com/api/oauth2/token', {
         method:  'POST',
@@ -330,11 +379,15 @@ async function handleCallback(url, env) {
     return redirect(redirectTo, { 'Set-Cookie': makeCookie(jwt) });
 }
 
-async function handleLogout(req, url, env) {
-    const allowed      = getAllowedOrigins(env.FRONTEND_URL);
-    const safeRedirect = safeRedirectUrl(url.searchParams.get('redirect') ?? allowed[0], env.FRONTEND_URL);
-
-    const payload = await verifyJWT(getCookie(req.headers.get('cookie'), 'auth'), env.COOKIE_SECRET);
+async function handleLogout(req, url, env, allowed) {
+    const safeRedirect = safeRedirectUrl(
+        url.searchParams.get('redirect') ?? allowed[0],
+        allowed,
+    );
+    const payload = await verifyJWT(
+        getCookie(req.headers.get('cookie'), 'auth'),
+        env.COOKIE_SECRET,
+    );
     if (payload?.sessionId) await env.SESSIONS.delete(`session:${payload.sessionId}`);
     return redirect(safeRedirect, { 'Set-Cookie': clearCookie() });
 }
@@ -343,7 +396,11 @@ async function handleUser(req, env, cors) {
     const auth = await requireAuth(req, env);
     if (!auth) return err(401);
     const { payload } = auth;
-    return json({ userId: payload.userId, username: payload.username, avatar: payload.avatar }, 200, cors);
+    return json(
+        { userId: payload.userId, username: payload.username, avatar: payload.avatar },
+        200,
+        cors,
+    );
 }
 
 async function handleGuilds(req, env, cors) {
@@ -389,10 +446,13 @@ async function handleGuildMember(req, url, env, cors) {
 
 export default {
     async fetch(req, env) {
-        const url    = new URL(req.url);
-        const origin = req.headers.get('origin') ?? '';
-        const cors   = corsHeaders(origin, env.FRONTEND_URL);
-        const ip     = req.headers.get('cf-connecting-ip') ?? req.headers.get('x-forwarded-for') ?? 'unknown';
+        const url     = new URL(req.url);
+        const origin  = req.headers.get('origin') ?? '';
+        const allowed = getAllowedOrigins(env.FRONTEND_URL);
+        const cors    = corsHeaders(origin, allowed);
+        const ip      = req.headers.get('cf-connecting-ip')
+                     ?? req.headers.get('x-forwarded-for')
+                     ?? 'unknown';
 
         if (req.method === 'OPTIONS')
             return new Response(null, { status: 204, headers: { ...cors, ...SEC_HEADERS } });
@@ -400,13 +460,13 @@ export default {
         if (await isRateLimited(ip, env.SESSIONS)) return err(429);
 
         switch (url.pathname) {
-            case '/auth/login':          return handleLogin(url, env);
-            case '/auth/callback':       return handleCallback(url, env);
-            case '/auth/logout':         return handleLogout(req, url, env);
-            case '/user':                return handleUser(req, env, cors);
-            case '/user/guilds':         return handleGuilds(req, env, cors);
-            case '/user/guilds/member':  return handleGuildMember(req, url, env, cors);
-            default:                     return err(404);
+            case '/auth/login':         return handleLogin(url, env, allowed);
+            case '/auth/callback':      return handleCallback(url, env, allowed);
+            case '/auth/logout':        return handleLogout(req, url, env, allowed);
+            case '/user':               return handleUser(req, env, cors);
+            case '/user/guilds':        return handleGuilds(req, env, cors);
+            case '/user/guilds/member': return handleGuildMember(req, url, env, cors);
+            default:                    return err(404);
         }
     },
 };
