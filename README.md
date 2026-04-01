@@ -45,4 +45,10 @@ In your worker's settings under **KV Namespace Bindings**, create a binding with
 
 ## Legal
 
-placeholder
+This project is licensed under the MIT License.
+
+By using this product or using our code you agree and have read the following:
+
+- [Terms of Service](https://llegonetwork.dev/terms)
+- [Privacy Policy](https://llegonetwork.dev/privacy)
+- [LICENSE](LICENSE)
