@@ -2,7 +2,6 @@ import { NavLink, useMatch } from 'react-router';
 import { useState, useEffect, useRef } from 'react';
 import './NavBar.scss'
 
-// Import project icons
 import legobotIcon from '../assets/legobot.png';
 import legogptIcon from '../assets/legogpt.png';
 import welcomerIcon from '../assets/welcomer.png';

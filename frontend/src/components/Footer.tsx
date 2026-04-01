@@ -8,6 +8,10 @@ export default function Footer() {
             <div className="footer-right">
                 <a href="/terms">Terms of Service</a>
                 <a href="/privacy">Privacy Policy</a>
+                
+                <a href="https://github.com/LegoLandon7/llegonetworkSite" target="_blank" rel="noopener noreferrer">
+                    GitHub Repo
+                </a>
             </div>
         </footer>
     );
