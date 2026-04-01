@@ -2,7 +2,31 @@ import { NavLink, useMatch } from 'react-router';
 import { useState, useEffect, useRef } from 'react';
 import './NavBar.scss'
 
+// Import project icons
+import legobotIcon from '../assets/legobot.png';
+import legogptIcon from '../assets/legogpt.png';
+import welcomerIcon from '../assets/welcomer.png';
+
 type User = { userId: string, username: string, avatar: string | null };
+
+type DropdownItem = {
+    label: string;
+    to: string;
+    icon?: string;
+    divider?: boolean;
+};
+
+const projectItems: DropdownItem[] = [
+    { label: 'Overview', to: '/projects' },
+    {
+        divider: true,
+        label: '',
+        to: ''
+    },
+    { label: 'LegoBot', to: '/projects/legobot', icon: legobotIcon },
+    { label: 'LegoGPT', to: '/projects/legogpt', icon: legogptIcon },
+    { label: 'Welcomer', to: '/projects/welcomer', icon: welcomerIcon },
+];
 
 export default function NavBar() {
     const [open, setOpen] = useState<'projects' | 'user' | null>(null);
@@ -85,10 +109,16 @@ export default function NavBar() {
                     </button>
 
                     <div className={`dropdown-menu ${open === 'projects' ? 'open' : ''}`}>
-                        <NavLink to='/projects' end onClick={closeAll}>Overview</NavLink>
-                        <NavLink to='/projects/legobot' onClick={closeAll}>LegoBot</NavLink>
-                        <NavLink to='/projects/legogpt' onClick={closeAll}>LegoGPT</NavLink>
-                        <NavLink to='/projects/welcomer' onClick={closeAll}>Welcomer</NavLink>
+                        {projectItems.map((item, idx) =>
+                            item.divider ? (
+                                <div key={`divider-${idx}`} className='dropdown-divider' />
+                            ) : (
+                                <NavLink key={item.to} to={item.to} end={item.to === '/projects'} onClick={closeAll} className='dropdown-item'>
+                                    {item.icon && <img src={item.icon} alt={item.label} className='dropdown-icon' />}
+                                    <span>{item.label}</span>
+                                </NavLink>
+                            )
+                        )}
                     </div>
                 </div>
 

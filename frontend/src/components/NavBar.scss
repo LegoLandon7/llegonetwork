@@ -188,6 +188,7 @@
                 display: flex;
                 flex-direction: column;
 
+                width: max-content;
                 background: var(--bg-surface);
                 border: 2px solid var(--border-strong);
                 border-top: none;
@@ -219,6 +220,33 @@
 
                     &:hover  { color: var(--text); background: var(--bg-hover); }
                     &.active { color: var(--text); background: var(--bg-subtle); }
+                }
+
+                .dropdown-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: var(--space-sm);
+                    padding: 0 var(--space-md);
+                    height: var(--navbar-height);
+
+                    .dropdown-icon {
+                        aspect-ratio: 1;
+                        height: calc(var(--navbar-height) * 0.45);
+                        width: auto;
+                        object-fit: contain;
+                        flex-shrink: 0;
+                    }
+
+                    span {
+                        white-space: nowrap;
+                    }
+                }
+
+                .dropdown-divider {
+                    height: 3px;
+                    background: var(--border-strong);
+                    margin: var(--space-sm) var(--space-md);
                 }
             }
 
@@ -334,6 +362,7 @@
 
                 .dropdown-menu {
                     position: static;
+                    width: 100%;
                     transform: none !important;
                     opacity: 1 !important;
                     pointer-events: all;
@@ -351,6 +380,18 @@
 
                         &:hover  { background: var(--bg-hover); }
                         &.active { background: var(--bg-subtle); }
+                    }
+
+                    .dropdown-item {
+                        padding-left: var(--space-lg);
+                        justify-content: flex-start;
+
+                        &:hover  { background: var(--bg-hover); }
+                        &.active { background: var(--bg-subtle); }
+                    }
+
+                    .dropdown-divider {
+                        margin: var(--space-sm) var(--space-md);
                     }
                 }
 
